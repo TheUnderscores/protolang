@@ -48,13 +48,11 @@ int main (void)
   typenames[TYPE_NUMBER] = "number";
   typenames[TYPE_STRING] = "string";
   typenames[TYPE_TABLE] = "table";
-  //DOIT
   valStrFuncs[TYPE_BOOLEAN] = boolToStr;
-  valStrFuncs[TYPE_NUMBER] = numToStr;
   valStrFuncs[TYPE_LIST] = listToStr;
+  valStrFuncs[TYPE_NUMBER] = numToStr;
   valStrFuncs[TYPE_STRING] = strToStr;
   valStrFuncs[TYPE_TABLE] = tableToStr;
-  //DOIT
   table *table1 = newTable();
   showTable(table1);
   double x = 7.2422;
