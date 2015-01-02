@@ -9,4 +9,4 @@
 #define VAL_FALSE	0
 #define VAL_TRUE	!(FALSE)
 
-#endif
+#endif /* #ifndef TYPE_H */
