@@ -5,30 +5,30 @@
 
 
 typedef struct var var;
-typedef struct list list;
-typedef struct listseg listseg;
+typedef struct table table;
+typedef struct tableseg tableseg;
 
 
-list *newList (void);
+table *newTable (void);
 var *newVar (unsigned short type, void *value);
-void addToList (list *listp, var *varp);
-void rmvFromList (list *listp, unsigned int i);
+void addToTable (table *tablep, var *varp);
+void rmvFromTable (table *tablep, unsigned int i);
 char *varValStr (var *varp);
-char *arrayToStr (void *value);
-char *boolToStr (void *value);
 char *listToStr (void *value);
+char *boolToStr (void *value);
+char *tableToStr (void *value);
 char *numToStr (void *value);
 char *strToStr (void *value);
-void showList (list *listp);
+void showTable (table *tablep);
 
-struct list {
+struct table {
   unsigned int size;
-  struct listseg *first;
+  struct tableseg *first;
 };
 
-struct listseg {
+struct tableseg {
   struct var *varp;
-  struct listseg *next;
+  struct tableseg *next;
 };
 
 struct var {
@@ -43,31 +43,33 @@ char *(*valStrFuncs[5]) (void *value);
 
 int main (void)
 {
-  typenames[TYPE_ARRAY] = "array";
   typenames[TYPE_BOOLEAN] = "boolean";
   typenames[TYPE_LIST] = "list";
   typenames[TYPE_NUMBER] = "number";
   typenames[TYPE_STRING] = "string";
-  valStrFuncs[TYPE_ARRAY] = arrayToStr;
+  typenames[TYPE_TABLE] = "table";
+  //DOIT
   valStrFuncs[TYPE_BOOLEAN] = boolToStr;
-  valStrFuncs[TYPE_LIST] = listToStr;
   valStrFuncs[TYPE_NUMBER] = numToStr;
+  valStrFuncs[TYPE_LIST] = listToStr;
   valStrFuncs[TYPE_STRING] = strToStr;
-  list *list1 = newList();
-  showList(list1);
+  valStrFuncs[TYPE_TABLE] = tableToStr;
+  //DOIT
+  table *table1 = newTable();
+  showTable(table1);
   double x = 7.2422;
   var *var1 = newVar(TYPE_NUMBER, (void*)&x);
-  addToList(list1, var1);
-  showList(list1);
+  addToTable(table1, var1);
+  showTable(table1);
   return 0;
 }
 
 
-list *newList (void)
+table *newTable (void)
 {
-  list *listp = (list*)malloc(sizeof(list));
-  (*listp).size = 0;
-  return listp;
+  table *tablep = (table*)malloc(sizeof(table));
+  (*tablep).size = 0;
+  return tablep;
 }
 
 var *newVar (unsigned short type, void *value)
@@ -78,24 +80,24 @@ var *newVar (unsigned short type, void *value)
   return varp;
 }
 
-void addToList (list *listp, var *varp)
+void addToTable (table *tablep, var *varp)
 {
   // Add to beginning of stack.
-  listseg *newseg = (listseg*)malloc(sizeof(listseg));
+  tableseg *newseg = (tableseg*)malloc(sizeof(tableseg));
   (*newseg).varp = varp;
-  (*newseg).next = (*listp).first;
-  (*listp).first = newseg;
-  (*listp).size += 1;
+  (*newseg).next = (*tablep).first;
+  (*tablep).first = newseg;
+  (*tablep).size += 1;
 }
 
-void rmvFromList (list *listp, unsigned int i)
+void rmvFromTable (table *tablep, unsigned int i)
 {
-  if (i > (*listp).size) {
+  if (i > (*tablep).size) {
     return;
   }
-  listseg *before;
-  listseg *after;
-  before = (*listp).first;
+  tableseg *before;
+  tableseg *after;
+  before = (*tablep).first;
   int cnt;
   for (cnt=1; cnt<i-1; cnt++)
     before = (*before).next;
@@ -105,7 +107,7 @@ void rmvFromList (list *listp, unsigned int i)
     free((void*)(*before).next);
   }
   (*before).next = after;
-  (*listp).size -= 1;
+  (*tablep).size -= 1;
 }
 
 char *varValStr (var *varp)
@@ -113,7 +115,7 @@ char *varValStr (var *varp)
   valStrFuncs[(*varp).type]((*varp).value);
 }
 
-char *arrayToStr (void *value)
+char *listToStr (void *value)
 {
   return "DOIT";
 }
@@ -127,7 +129,7 @@ char *boolToStr (void *value)
   }
 }
 
-char *listToStr (void *value)
+char *tableToStr (void *value)
 {
   return "DOIT";
 }
@@ -144,15 +146,15 @@ char *strToStr (void *value)
   return (char*)value;
 }
 
-void showList (list *listp)
+void showTable (table *tablep)
 {
-  if ((*listp).first == NULL) {
-    puts("nothing in list");
+  if ((*tablep).first == NULL) {
+    puts("nothing in table");
     return;
   }
-  listseg *cur;
+  tableseg *cur;
   var *varp;
-  cur = (*listp).first;
+  cur = (*tablep).first;
   while (cur != NULL) {
     varp = (*cur).varp;
     char str[60];
