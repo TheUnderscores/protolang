@@ -4,6 +4,22 @@
 #include "types.h"
 #include "type_table.h"
 
+typedef struct tableseg {
+  struct var *varp;
+  struct tableseg *next;
+} tableseg;
+
+static char *varValStr (var *varp);
+static char *listToStr (void *value);
+static char *boolToStr (void *value);
+static char *tableToStr (void *value);
+static char *numToStr (void *value);
+static char *strToStr (void *value);
+
+static const char *typenames[5];
+static char *(*valStrFuncs[5]) (void *value);
+
+
 /* Global functions */
 
 void initType_table (void)

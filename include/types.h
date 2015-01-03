@@ -8,6 +8,7 @@
 #define TYPE_TABLE	4
 #define VAL_FALSE	0
 #define VAL_TRUE	!(FALSE)
+#define UNUSED(x) (void)(x)
 
 typedef struct var {
   unsigned char type;
@@ -18,5 +19,7 @@ typedef struct table {
   unsigned int size;
   struct tableseg *first;
 } table;
+
+var *newVar (unsigned char type, void *value);
 
 #endif /* #ifndef TYPE_H */

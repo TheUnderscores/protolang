@@ -9,9 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
-
-
-var *newVar (unsigned char type, void *value);
+#include "type_table.h"
 
 
 int main (void)
@@ -19,12 +17,36 @@ int main (void)
   initType_table();
   
   /* Test */
+  /* Feel free to edit this section as you please. */
+  /* If in doubt, just comment out code you don't want to use. */
+  /* Just make sure it's functional before making a pull request. */
+
   table *table1 = newTable();
-  showTable(table1);
-  double x = 1337.0314159265;
-  var *var1 = newVar(TYPE_NUMBER, (void*)&x);
+  puts("");
+  puts("-------------------------------------------------------------------");
+  puts(" This interface is purely for testing purposes.                    ");
+  puts(" Input isn't checked, so invalid input will probably cause issues. ");
+  puts("-------------------------------------------------------------------");
+  puts("");
+  
+  double x1 = 3.1415926535;
+  double x2 = 13.37;
+  var *var1 = newVar(TYPE_NUMBER, (void *)&x1);
+  var *var2 = newVar(TYPE_NUMBER, (void *)&x2);
   addToTable(table1, var1);
+  puts("\nTable contents:");
   showTable(table1);
+  addToTable(table1, var2);
+  
+  while (1) {
+    double *x = malloc(sizeof(double));
+    puts("\nTable contents:");
+    showTable(table1);
+    printf("\nEnter a number (double); Ctrl-C to quit: ");
+    scanf("%lf", x);
+    addToTable(table1, newVar(TYPE_NUMBER, (void *)x));
+  }
+  
   /* EOF Test */
   
   return 0;
