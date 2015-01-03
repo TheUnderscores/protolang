@@ -38,7 +38,7 @@ char *boolToStr (void *value);
 char *tableToStr (void *value);
 char *numToStr (void *value);
 char *strToStr (void *value);
-void showTable (struct table_t *tablep);
+void showTable (table *tablep);
 
 const char *typenames[5];
 
