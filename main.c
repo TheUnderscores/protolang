@@ -12,9 +12,20 @@
 #include "type.h"
 
 
-typedef struct var var;
-typedef struct table table;
-typedef struct tableseg tableseg;
+typedef struct table {
+  unsigned int size;
+  struct tableseg *first;
+} table;
+
+typedef struct tableseg {
+  struct var *varp;
+  struct tableseg *next;
+} tableseg;
+
+typedef struct var {
+  unsigned char type;
+  void *value;
+} var;
 
 
 table *newTable (void);
@@ -28,21 +39,6 @@ char *tableToStr (void *value);
 char *numToStr (void *value);
 char *strToStr (void *value);
 void showTable (table *tablep);
-
-struct table {
-  unsigned int size;
-  struct tableseg *first;
-};
-
-struct tableseg {
-  struct var *varp;
-  struct tableseg *next;
-};
-
-struct var {
-  unsigned char type;
-  void *value;
-};
 
 
 char *typenames[5];
