@@ -11,11 +11,10 @@
 #include "types.h"
 #include "type_table.h"
 
-
-int main (void)
+int main(void)
 {
 	initType_table();
-  
+
 	/* Test */
 	/* Feel free to edit this section as you please. */
 	/* If in doubt, just comment out code you don't want to use. */
@@ -28,7 +27,7 @@ int main (void)
 	puts(" Input isn't checked, so invalid input will probably cause issues. ");
 	puts("-------------------------------------------------------------------");
 	puts("");
-  
+
 	double x1 = 3.1415926535;
 	double x2 = 13.37;
 	var *var1 = newVar(TYPE_NUMBER, (void *)&x1);
@@ -37,7 +36,7 @@ int main (void)
 	puts("\nTable contents:");
 	showTable(table1);
 	addToTable(table1, var2);
-  
+
 	while (1) {
 		double *x = malloc(sizeof(double));
 		puts("\nTable contents:");
@@ -46,14 +45,13 @@ int main (void)
 		scanf("%lf", x);
 		addToTable(table1, newVar(TYPE_NUMBER, (void *)x));
 	}
-  
+
 	/* EOF Test */
-  
+
 	return 0;
 }
 
-
-var *newVar (unsigned char type, void *value)
+var *newVar(unsigned char type, void *value)
 {
 	var *varp = malloc(sizeof(var));
 	varp->type = type;

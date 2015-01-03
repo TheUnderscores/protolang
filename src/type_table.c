@@ -9,20 +9,19 @@ typedef struct tableseg {
 	struct tableseg *next;
 } tableseg;
 
-static char *varValStr (var *varp);
-static char *listToStr (void *value);
-static char *boolToStr (void *value);
-static char *tableToStr (void *value);
-static char *numToStr (void *value);
-static char *strToStr (void *value);
+static char *varValStr(var *varp);
+static char *listToStr(void *value);
+static char *boolToStr(void *value);
+static char *tableToStr(void *value);
+static char *numToStr(void *value);
+static char *strToStr(void *value);
 
 static const char *typenames[5];
 static char *(*valStrFuncs[5]) (void *value);
 
-
 /* Global functions */
 
-void initType_table (void)
+void initType_table(void)
 {
 	typenames[TYPE_BOOLEAN] = "boolean";
 	typenames[TYPE_LIST] = "list";
@@ -36,14 +35,14 @@ void initType_table (void)
 	valStrFuncs[TYPE_TABLE] = tableToStr;
 }
 
-table *newTable (void)
+table *newTable(void)
 {
 	table *tablep = malloc(sizeof(table));
 	tablep->size = 0;
 	return tablep;
 }
 
-void addToTable (table *tablep, var *varp)
+void addToTable(table *tablep, var *varp)
 {
 	// Add to beginning of stack.
 	tableseg *newseg = malloc(sizeof(tableseg));
@@ -53,7 +52,7 @@ void addToTable (table *tablep, var *varp)
 	tablep->size += 1;
 }
 
-void rmvFromTable (table *tablep, unsigned int i)
+void rmvFromTable(table *tablep, unsigned int i)
 {
 	if (i > tablep->size) {
 		return;
@@ -62,18 +61,18 @@ void rmvFromTable (table *tablep, unsigned int i)
 	tableseg *after;
 	before = tablep->first;
 	int cnt;
-	for (cnt=1; cnt<i-1; cnt++)
+	for (cnt = 1; cnt < i - 1; cnt++)
 		before = before->next;
 	after = before->next;
 	if (after) {
 		after = after->next;
-		free((void*)before->next);
+		free((void *)before->next);
 	}
 	before->next = after;
 	tablep->size -= 1;
 }
 
-void showTable (table *tablep)
+void showTable(table *tablep)
 {
 	if (tablep->first == NULL) {
 		puts("nothing in table");
@@ -93,42 +92,42 @@ void showTable (table *tablep)
 
 /* Static functions */
 
-char *varValStr (var *varp)
+char *varValStr(var *varp)
 {
-	return valStrFuncs[varp->type](varp->value);
+	return valStrFuncs[varp->type] (varp->value);
 }
 
-char *listToStr (void *value)
+char *listToStr(void *value)
 {
 	/* Change later */
 	UNUSED(value);
-	return (char *) "DOIT";
+	return (char *)"DOIT";
 }
 
-char *boolToStr (void *value)
+char *boolToStr(void *value)
 {
-	if ((char*)value == 0) {
-		return (char *) "FALSE";
+	if ((char *)value == 0) {
+		return (char *)"FALSE";
 	} else {
-		return (char *) "TRUE";
+		return (char *)"TRUE";
 	}
 }
 
-char *tableToStr (void *value)
+char *tableToStr(void *value)
 {
 	/* Change later */
 	UNUSED(value);
-	return (char *) "DOIT";
+	return (char *)"DOIT";
 }
 
-char *numToStr (void *value)
+char *numToStr(void *value)
 {
-	char *str = malloc(sizeof(char)*50);
-	snprintf(str, 50, "%f", *(double*)value);
+	char *str = malloc(sizeof(char) * 50);
+	snprintf(str, 50, "%f", *(double *)value);
 	return str;
 }
 
-char *strToStr (void *value)
+char *strToStr(void *value)
 {
-	return (char*)value;
+	return (char *)value;
 }
