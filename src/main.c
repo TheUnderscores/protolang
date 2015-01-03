@@ -28,7 +28,6 @@ typedef struct var {
   void *value;
 } var;
 
-
 table *newTable (void);
 var *newVar (unsigned char type, void *value);
 void addToTable (table *tablep, var *varp);
@@ -59,10 +58,10 @@ int main (void)
   valStrFuncs[TYPE_TABLE] = tableToStr;
   
   /* Test */
-  struct table_t *table1 = newTable();
+  table *table1 = newTable();
   showTable(table1);
   double x = 9000.1;
-  struct var_t *var1 = newVar(TYPE_NUMBER, (void*)&x);
+  var *var1 = newVar(TYPE_NUMBER, (void*)&x);
   addToTable(table1, var1);
   showTable(table1);
   /* EOF Test */
@@ -71,38 +70,38 @@ int main (void)
 }
 
 
-struct table_t *newTable (void)
+table *newTable (void)
 {
-  struct table_t *tablep = malloc(sizeof(struct table_t));
+  table *tablep = malloc(sizeof(table));
   tablep->size = 0;
   return tablep;
 }
 
-struct var_t *newVar (unsigned char type, void *value)
+var *newVar (unsigned char type, void *value)
 {
-  struct var_t *varp = malloc(sizeof(struct var_t));
+  var *varp = malloc(sizeof(var));
   varp->type = type;
   varp->value = value;
   return varp;
 }
 
-void addToTable (struct table_t *tablep, struct var_t *varp)
+void addToTable (table *tablep, var *varp)
 {
   // Add to beginning of stack.
-  struct tableseg_t *newseg = malloc(sizeof(struct tableseg_t));
+  tableseg *newseg = malloc(sizeof(tableseg));
   newseg->varp = varp;
   newseg->next = tablep->first;
   tablep->first = newseg;
   tablep->size += 1;
 }
 
-void rmvFromTable (struct table_t *tablep, unsigned int i)
+void rmvFromTable (table *tablep, unsigned int i)
 {
   if (i > tablep->size) {
     return;
   }
-  struct tableseg_t *before;
-  struct tableseg_t *after;
+  tableseg *before;
+  tableseg *after;
   before = tablep->first;
   int cnt;
   for (cnt=1; cnt<i-1; cnt++)
@@ -116,7 +115,7 @@ void rmvFromTable (struct table_t *tablep, unsigned int i)
   tablep->size -= 1;
 }
 
-char *varValStr (struct var_t *varp)
+char *varValStr (var *varp)
 {
   return valStrFuncs[varp->type](varp->value);
 }
@@ -156,14 +155,14 @@ char *strToStr (void *value)
   return (char*)value;
 }
 
-void showTable (struct table_t *tablep)
+void showTable (table *tablep)
 {
   if (tablep->first == NULL) {
     puts("nothing in table");
     return;
   }
-  struct tableseg_t *cur;
-  struct var_t *varp;
+  tableseg *cur;
+  var *varp;
   for (cur = tablep->first; cur != NULL; cur = cur->next) {
     varp = cur->varp;
     char str[60];
