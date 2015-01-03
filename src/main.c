@@ -11,6 +11,7 @@
 #include <string.h>
 #include "type.h"
 
+#define UNUSED(x) (void)(x)
 
 typedef struct table {
   unsigned int size;
@@ -27,7 +28,6 @@ typedef struct var {
   void *value;
 } var;
 
-
 table *newTable (void);
 var *newVar (unsigned char type, void *value);
 void addToTable (table *tablep, var *varp);
@@ -40,10 +40,9 @@ char *numToStr (void *value);
 char *strToStr (void *value);
 void showTable (table *tablep);
 
+const char *typenames[5];
 
-char *typenames[5];
 char *(*valStrFuncs[5]) (void *value);
-
 
 int main (void)
 {
@@ -73,14 +72,14 @@ int main (void)
 
 table *newTable (void)
 {
-  table *tablep = (table*)malloc(sizeof(table));
+  table *tablep = malloc(sizeof(table));
   tablep->size = 0;
   return tablep;
 }
 
 var *newVar (unsigned char type, void *value)
 {
-  var *varp = (var*)malloc(sizeof(var));
+  var *varp = malloc(sizeof(var));
   varp->type = type;
   varp->value = value;
   return varp;
@@ -89,7 +88,7 @@ var *newVar (unsigned char type, void *value)
 void addToTable (table *tablep, var *varp)
 {
   // Add to beginning of stack.
-  tableseg *newseg = (tableseg*)malloc(sizeof(tableseg));
+  tableseg *newseg = malloc(sizeof(tableseg));
   newseg->varp = varp;
   newseg->next = tablep->first;
   tablep->first = newseg;
@@ -118,28 +117,30 @@ void rmvFromTable (table *tablep, unsigned int i)
 
 char *varValStr (var *varp)
 {
-  valStrFuncs[varp->type](varp->value);
+  return valStrFuncs[varp->type](varp->value);
 }
 
 char *listToStr (void *value)
 {
   /* Change later */
-  return "DOIT";
+  UNUSED(value);
+  return (char *) "DOIT";
 }
 
 char *boolToStr (void *value)
 {
   if ((char*)value == 0) {
-    return "FALSE";
+    return (char *) "FALSE";
   } else {
-    return "TRUE";
+    return (char *) "TRUE";
   }
 }
 
 char *tableToStr (void *value)
 {
   /* Change later */
-  return "DOIT";
+  UNUSED(value);
+  return (char *) "DOIT";
 }
 
 char *numToStr (void *value)
@@ -162,14 +163,12 @@ void showTable (table *tablep)
   }
   tableseg *cur;
   var *varp;
-  cur = tablep->first;
-  while (cur != NULL) {
+  for (cur = tablep->first; cur != NULL; cur = cur->next) {
     varp = cur->varp;
     char str[60];
     strcpy(str, typenames[varp->type]);
     strcat(str, "\t");
     strcat(str, varValStr(varp));
     puts(str);
-    cur = cur->next;
   }
 }
