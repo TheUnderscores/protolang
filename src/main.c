@@ -2,7 +2,6 @@
  *  - MAYBE make a global table, in which all variables reside
  *  - add booleans, lists, strings, and functions
  *  - finish showTable()
- *  - MAYBE move newVar() to it's own file; could be a waste of space, though
  */
 
 #include <stdio.h>
@@ -10,6 +9,7 @@
 #include <string.h>
 #include "types.h"
 #include "type_table.h"
+#include "vars.h"
 
 int main(void)
 {
@@ -49,12 +49,4 @@ int main(void)
 	/* EOF Test */
 
 	return 0;
-}
-
-var_t *newVar(unsigned char type, void *value)
-{
-	var_t *varp = malloc(sizeof(var_t));
-	varp->type = type;
-	varp->value = value;
-	return varp;
 }

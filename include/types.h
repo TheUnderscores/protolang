@@ -25,6 +25,4 @@ typedef struct {
 	struct tableseg *first;
 } table_t;
 
-var_t *newVar(unsigned char type, void *value);
-
 #endif /* #ifndef TYPE_H */
