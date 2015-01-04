@@ -10,16 +10,21 @@
 #define VAL_TRUE	!(FALSE)
 #define UNUSED(x) (void)(x)
 
-typedef struct var {
+typedef struct {
 	unsigned char type;
 	void *value;
-} var;
+} var_t;
 
-typedef struct table {
+struct tableseg {
+	var_t *varp;
+	struct tableseg *next;
+};
+
+typedef struct {
 	unsigned int size;
 	struct tableseg *first;
-} table;
+} table_t;
 
-var *newVar(unsigned char type, void *value);
+var_t *newVar(unsigned char type, void *value);
 
 #endif /* #ifndef TYPE_H */

@@ -4,12 +4,7 @@
 #include "types.h"
 #include "type_table.h"
 
-typedef struct tableseg {
-	struct var *varp;
-	struct tableseg *next;
-} tableseg;
-
-static char *varValStr(var *varp);
+static char *varValStr(var_t *varp);
 static char *listToStr(void *value);
 static char *boolToStr(void *value);
 static char *tableToStr(void *value);
@@ -35,30 +30,30 @@ void initType_table(void)
 	valStrFuncs[TYPE_TABLE] = tableToStr;
 }
 
-table *newTable(void)
+table_t *newTable(void)
 {
-	table *tablep = malloc(sizeof(table));
+	table_t *tablep = malloc(sizeof(table_t));
 	tablep->size = 0;
 	return tablep;
 }
 
-void addToTable(table *tablep, var *varp)
+void addToTable(table_t *tablep, var_t *varp)
 {
 	// Add to beginning of stack.
-	tableseg *newseg = malloc(sizeof(tableseg));
+	struct tableseg *newseg = malloc(sizeof(struct tableseg));
 	newseg->varp = varp;
 	newseg->next = tablep->first;
 	tablep->first = newseg;
 	tablep->size += 1;
 }
 
-void rmvFromTable(table *tablep, unsigned int i)
+void rmvFromTable(table_t *tablep, unsigned int i)
 {
 	if (i > tablep->size) {
 		return;
 	}
-	tableseg *before;
-	tableseg *after;
+	struct tableseg *before;
+	struct tableseg *after;
 	before = tablep->first;
 	int cnt;
 	for (cnt = 1; cnt < i - 1; cnt++)
@@ -72,14 +67,14 @@ void rmvFromTable(table *tablep, unsigned int i)
 	tablep->size -= 1;
 }
 
-void showTable(table *tablep)
+void showTable(table_t *tablep)
 {
 	if (tablep->first == NULL) {
 		puts("nothing in table");
 		return;
 	}
-	tableseg *cur;
-	var *varp;
+	struct tableseg *cur;
+	var_t *varp;
 	for (cur = tablep->first; cur != NULL; cur = cur->next) {
 		varp = cur->varp;
 		char str[60];
@@ -92,7 +87,7 @@ void showTable(table *tablep)
 
 /* Static functions */
 
-char *varValStr(var *varp)
+char *varValStr(var_t *varp)
 {
 	return valStrFuncs[varp->type] (varp->value);
 }
