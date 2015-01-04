@@ -20,6 +20,6 @@ typedef struct table {
 	struct tableseg *first;
 } table;
 
-var *newVar (unsigned char type, void *value);
+var *newVar(unsigned char type, void *value);
 
 #endif /* #ifndef TYPE_H */
