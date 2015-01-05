@@ -37,16 +37,47 @@ int main(void)
 	showTable(table1);
 	addToTable(table1, var2);
 
+	const int input_size = 512; /* 512 should be enough for anyone :P */
+	char *input = malloc(sizeof(char) * input_size);
+
 	while (1) {
-		double *x = malloc(sizeof(double));
 		puts("\nTable contents:");
 		showTable(table1);
-		printf("\nEnter a number (double); Ctrl-C to quit: ");
-		scanf("%lf", x);
-		addToTable(table1, newVar(TYPE_NUMBER, (void *)x));
+		printf("\nEnter a number (double); 'q' to quit: ");
+
+		/*
+		 * TODO: the input bits should likely go into
+		 * it's own function(s)...
+		 */
+
+		if (fgets(input, input_size, stdin) == NULL) {
+			perror("Error reading input");
+			continue;
+		}
+
+		if (input[0] == 'q') /* Quit signal */
+			break;
+
+		if (input[0] == '\n') /* No input! Just ignore it. */
+			continue;
+
+		/* FIXME: This method causes memory leaks! */
+		double *x = malloc(sizeof(double));
+		char *strend;
+		*x = strtod(input, &strend);
+
+		/*
+		 * Inequality means that strtod() actually
+		 * did something. Add x to table.
+		 */
+
+		if (input != strend)
+			addToTable(table1, newVar(TYPE_NUMBER, (void *)x));
+		else
+			puts("Did not enter a number.");
 	}
 
-	/* EOF Test */
+	free(input);
 
 	return 0;
 }

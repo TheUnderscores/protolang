@@ -34,8 +34,8 @@ all: protolang
 protolang: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o protolang
 
-debug: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -g -o protolang
+debug: CFLAGS += -g
+debug: protolang
 
 clean:
 	$(RM) -f $(OBJS) protolang
