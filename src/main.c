@@ -14,6 +14,7 @@
 int main(void)
 {
 	initType_table();
+	initVars();
 
 	/* Test */
 	/* Feel free to edit this section as you please. */
@@ -27,7 +28,7 @@ int main(void)
 	puts(" Input isn't checked, so invalid input will probably cause issues. ");
 	puts("-------------------------------------------------------------------");
 	puts("");
-
+        
 	double x1 = 3.1415926535;
 	double x2 = 13.37;
 	var_t *var1 = newVar(TYPE_NUMBER, (void *)&x1);
@@ -75,8 +76,11 @@ int main(void)
 			addToTable(table1, newVar(TYPE_NUMBER, (void *)x));
 		else
 			puts("Did not enter a number.");
+		
+		free(x);
 	}
-
+	
+	delTable(table1);
 	free(input);
 
 	return 0;

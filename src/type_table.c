@@ -3,6 +3,7 @@
 #include <string.h>
 #include "types.h"
 #include "type_table.h"
+#include "vars.h"
 
 static char *varValStr(var_t *varp);
 static char *listToStr(void *value);
@@ -69,13 +70,13 @@ void rmvFromTable(table_t *tablep, unsigned int i)
 
 void showTable(table_t *tablep)
 {
-	if (tablep->first == NULL) {
+	if (!tablep->first) {
 		puts("nothing in table");
 		return;
 	}
 	struct tableseg *cur;
 	var_t *varp;
-	for (cur = tablep->first; cur != NULL; cur = cur->next) {
+	for (cur = tablep->first; cur; cur = cur->next) {
 		varp = cur->varp;
 		char str[60];
 		strcpy(str, typenames[varp->type]);
@@ -83,6 +84,23 @@ void showTable(table_t *tablep)
 		strcat(str, varValStr(varp));
 		puts(str);
 	}
+}
+
+void delTable(table_t *tablep)
+{
+	if (tablep->first) {
+		/* Delete all variables in table. */
+		struct tableseg *cur, *nxt;
+		for (cur = tablep->first, nxt = cur->next;
+		     nxt;
+		     cur = nxt, nxt = cur->next
+		) {
+			delVar(cur->varp);
+			free(cur);
+		}
+	}
+	/* Delete table */
+	free(tablep);
 }
 
 /* Static functions */
