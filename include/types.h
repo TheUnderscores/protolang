@@ -2,10 +2,11 @@
 #define TYPE_H
 
 #define TYPE_BOOLEAN	0
-#define TYPE_LIST	1
-#define TYPE_NUMBER	2
-#define TYPE_STRING	3
-#define TYPE_TABLE	4
+#define TYPE_FUNCTION   1
+#define TYPE_LIST	2
+#define TYPE_NUMBER	3
+#define TYPE_STRING	4
+#define TYPE_TABLE	5
 #define VAL_FALSE	0
 #define VAL_TRUE	!(FALSE)
 #define UNUSED(x) (void)(x)
