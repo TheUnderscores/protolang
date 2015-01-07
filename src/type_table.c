@@ -6,14 +6,15 @@
 #include "vars.h"
 
 static char *varValStr(var_t *varp);
-static char *listToStr(void *value);
 static char *boolToStr(void *value);
-static char *tableToStr(void *value);
+static char *funcToStr(void *value); /* TODO */
+static char *listToStr(void *value); /* TODO */
 static char *numToStr(void *value);
 static char *strToStr(void *value);
+static char *tableToStr(void *value);
 
-static const char *typenames[5];
-static char *(*valStrFuncs[5]) (void *value);
+static const char *typenames[6];
+static char *(*valStrFuncs[6]) (void *value);
 
 /* Global functions */
 
@@ -21,11 +22,13 @@ void initType_table(void)
 {
 	typenames[TYPE_BOOLEAN] = "boolean";
 	typenames[TYPE_LIST] = "list";
+	typenames[TYPE_FUNCTION] = "function";
 	typenames[TYPE_NUMBER] = "number";
 	typenames[TYPE_STRING] = "string";
 	typenames[TYPE_TABLE] = "table";
 	valStrFuncs[TYPE_BOOLEAN] = boolToStr;
 	valStrFuncs[TYPE_LIST] = listToStr;
+	valStrFuncs[TYPE_FUNCTION] = funcToStr;
 	valStrFuncs[TYPE_NUMBER] = numToStr;
 	valStrFuncs[TYPE_STRING] = strToStr;
 	valStrFuncs[TYPE_TABLE] = tableToStr;
@@ -110,13 +113,6 @@ char *varValStr(var_t *varp)
 	return valStrFuncs[varp->type] (varp->value);
 }
 
-char *listToStr(void *value)
-{
-	/* Change later */
-	UNUSED(value);
-	return (char *)"DOIT";
-}
-
 char *boolToStr(void *value)
 {
 	if ((char *)value == 0) {
@@ -126,11 +122,18 @@ char *boolToStr(void *value)
 	}
 }
 
-char *tableToStr(void *value)
+char *funcToStr(void *value)
 {
 	/* Change later */
 	UNUSED(value);
-	return (char *)"DOIT";
+	return (char *)"[placeholder]";
+}
+
+char *listToStr(void *value)
+{
+	/* Change later */
+	UNUSED(value);
+	return (char *)"[placeholder]";
 }
 
 char *numToStr(void *value)
@@ -143,4 +146,11 @@ char *numToStr(void *value)
 char *strToStr(void *value)
 {
 	return (char *)value;
+}
+
+char *tableToStr(void *value)
+{
+	/* Change later */
+	UNUSED(value);
+	return (char *)"DOIT";
 }

@@ -14,7 +14,6 @@
 int main(void)
 {
 	initType_table();
-	initVars();
 
 	/* Test */
 	/* Feel free to edit this section as you please. */
