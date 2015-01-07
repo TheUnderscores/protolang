@@ -12,18 +12,29 @@ var_t *newVar(unsigned char type, void *value)
 	/* and also so the end-user can not interfere with it */
 	/* through the given pointer argument */
 	int size;
-	if (type == TYPE_BOOLEAN)
+	switch (type) {
+	case TYPE_BOOLEAN:
 		size = sizeof(char);
-	else if (type == TYPE_FUNCTION)
+		break;
+	case TYPE_FUNCTION:
 		size = 0;  /* TODO: add size of function */
-	else if (type == TYPE_LIST)
+		break;
+	case TYPE_LIST:
 		size = 0;  /* TODO: add size of list */
-	else if (type == TYPE_NUMBER)
+		break;
+	case TYPE_NUMBER:
 		size = sizeof(double);
-	else if (type == TYPE_STRING)
+		break;
+	case TYPE_STRING:
 		size = strlen(value) * sizeof(char);
-	else if (type == TYPE_TABLE)
+		break;
+	case TYPE_TABLE:
 		size = sizeof(table_t);
+		break;
+	default:
+		size = 0;
+		break;
+	}
 	varp->value = malloc(size);
 	memcpy(varp->value, value, size);
 	return varp;
