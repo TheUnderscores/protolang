@@ -81,6 +81,8 @@ void rmvFromTable(table_t *tablep, unsigned int i)
 	if (cur->next != NULL) {
 		del = cur->next;
 
+		cur->next = del->next;
+
 		delVar(del->varp);
 		free(del);
 
