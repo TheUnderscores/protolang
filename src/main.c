@@ -61,7 +61,6 @@ int main(void)
 		if (input[0] == '\n') /* No input! Just ignore it. */
 			continue;
 
-		/* FIXME: This method causes memory leaks! */
 		double *x = malloc(sizeof(double));
 		char *strend;
 		*x = strtod(input, &strend);
@@ -78,8 +77,9 @@ int main(void)
 		
 		free(x);
 	}
-	
+
 	delTable(table1);
+
 	free(input);
 
 	return 0;

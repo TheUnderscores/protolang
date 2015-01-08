@@ -38,6 +38,7 @@ table_t *newTable(void)
 {
 	table_t *tablep = malloc(sizeof(table_t));
 	tablep->size = 0;
+	tablep->first = NULL;
 	return tablep;
 }
 
@@ -45,6 +46,7 @@ void addToTable(table_t *tablep, var_t *varp)
 {
 	// Add to beginning of stack.
 	struct tableseg *newseg = malloc(sizeof(struct tableseg));
+	memset(newseg, 0, sizeof(struct tableseg));
 	newseg->varp = varp;
 	newseg->next = tablep->first;
 	tablep->first = newseg;
@@ -53,22 +55,40 @@ void addToTable(table_t *tablep, var_t *varp)
 
 void rmvFromTable(table_t *tablep, unsigned int i)
 {
-	if (i > tablep->size) {
+	if (i + 1 > tablep->size) {
 		return;
 	}
-	struct tableseg *before;
-	struct tableseg *after;
-	before = tablep->first;
-	int cnt;
-	for (cnt = 1; cnt < i - 1; cnt++)
-		before = before->next;
-	after = before->next;
-	if (after) {
-		after = after->next;
-		free((void *)before->next);
+	struct tableseg *cur, *del;
+
+	cur = tablep->first;
+
+	/* TODO: loop algorithm doesn't handle first element */
+	if (i == 0) {
+		del = cur;
+		tablep->first = cur->next;
+		delVar(del->varp);
+		free(del);
+		return;
 	}
-	before->next = after;
-	tablep->size -= 1;
+
+	/* Get to one before  */
+	int cnt;
+	for (cnt = 1; cnt < i; cnt++)
+			cur = cur->next;
+
+	/* Delete the next one */
+
+	if (cur->next != NULL) {
+		del = cur->next;
+
+		delVar(del->varp);
+		free(del);
+
+		tablep->size -= 1;
+	} else {
+		fprintf(stderr, "protolang: attempted to delete non-existant "
+			"table element.\n");
+	}
 }
 
 void showTable(table_t *tablep)
@@ -77,6 +97,9 @@ void showTable(table_t *tablep)
 		puts("nothing in table");
 		return;
 	}
+
+	printf("%d elements in table\n", tablep->size);
+
 	struct tableseg *cur;
 	var_t *varp;
 	for (cur = tablep->first; cur; cur = cur->next) {
@@ -93,14 +116,10 @@ void delTable(table_t *tablep)
 {
 	if (tablep->first) {
 		/* Delete all variables in table. */
-		struct tableseg *cur, *nxt;
-		for (cur = tablep->first, nxt = cur->next;
-		     nxt;
-		     cur = nxt, nxt = cur->next
-		) {
-			delVar(cur->varp);
-			free(cur);
-		}
+	        int i;
+		for (i = 0; i < tablep->size; i++)
+			/* Yes, really, delete first element each time */
+			rmvFromTable(tablep, 0);
 	}
 	/* Delete table */
 	free(tablep);
@@ -138,7 +157,7 @@ char *listToStr(void *value)
 
 char *numToStr(void *value)
 {
-	char *str = malloc(sizeof(char) * 50);
+	static char str[50];
 	snprintf(str, 50, "%f", *(double *)value);
 	return str;
 }
