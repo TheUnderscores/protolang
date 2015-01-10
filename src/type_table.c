@@ -55,42 +55,28 @@ void addToTable(table_t *tablep, var_t *varp)
 
 void rmvFromTable(table_t *tablep, unsigned int i)
 {
-	if (i + 1 > tablep->size) {
+	if (tablep->size == 0)
 		return;
-	}
-	struct tableseg *cur, *del;
 
-	cur = tablep->first;
-
-	/* TODO: loop algorithm doesn't handle first element */
-	if (i == 0) {
-		del = cur;
-		tablep->first = cur->next;
-		delVar(del->varp);
-		free(del);
+	if (i + 1 > tablep->size)
 		return;
-	}
+
+	struct tableseg *prev, *cur;
 
 	/* Get to one before  */
 	int cnt;
-	for (cnt = 1; cnt < i; cnt++)
-			cur = cur->next;
+	for (cnt = 0, prev = NULL, cur = tablep->first; cnt < i;
+	     cnt++, prev = cur, cur = cur->next);
 
-	/* Delete the next one */
+	if (prev == NULL)
+		tablep->first = cur->next;
+	else
+		prev->next = cur->next;
 
-	if (cur->next != NULL) {
-		del = cur->next;
+	delVar(cur->varp);
+	free(cur);
 
-		cur->next = del->next;
-
-		delVar(del->varp);
-		free(del);
-
-		tablep->size -= 1;
-	} else {
-		fprintf(stderr, "protolang: attempted to delete non-existant "
-			"table element.\n");
-	}
+	tablep->size--;
 }
 
 void showTable(table_t *tablep)
@@ -119,7 +105,8 @@ void delTable(table_t *tablep)
 	if (tablep->first) {
 		/* Delete all variables in table. */
 	        int i;
-		for (i = 0; i < tablep->size; i++)
+		int init_size = tablep->size;
+		for (i = 0; i < init_size; i++)
 			/* Yes, really, delete first element each time */
 			rmvFromTable(tablep, 0);
 	}
