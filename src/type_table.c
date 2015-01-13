@@ -37,6 +37,10 @@ void initType_table(void)
 table_t *newTable(void)
 {
 	table_t *tablep = malloc(sizeof(table_t));
+
+	if (tablep == NULL)
+		return NULL;
+
 	tablep->size = 0;
 	tablep->first = NULL;
 	return tablep;
@@ -46,6 +50,12 @@ void addToTable(table_t *tablep, var_t *varp)
 {
 	// Add to beginning of stack.
 	struct tableseg *newseg = malloc(sizeof(struct tableseg));
+
+	if (newseg == NULL) {
+		perror("Could not add to table");
+		return;
+	}
+
 	memset(newseg, 0, sizeof(struct tableseg));
 	newseg->varp = varp;
 	newseg->next = tablep->first;
@@ -63,7 +73,7 @@ void rmvFromTable(table_t *tablep, unsigned int i)
 
 	struct tableseg *prev, *cur;
 
-	/* Get to one before  */
+	/* Get to one before */
 	int cnt;
 	for (cnt = 0, prev = NULL, cur = tablep->first; cnt < i;
 	     cnt++, prev = cur, cur = cur->next);
@@ -118,16 +128,15 @@ void delTable(table_t *tablep)
 
 char *varValStr(var_t *varp)
 {
-	return valStrFuncs[varp->type] (varp->value);
+	return valStrFuncs[varp->type](varp->value);
 }
 
 char *boolToStr(void *value)
 {
-	if ((char *)value == 0) {
+	if ((char *)value == 0)
 		return (char *)"FALSE";
-	} else {
+	else
 		return (char *)"TRUE";
-	}
 }
 
 char *funcToStr(void *value)

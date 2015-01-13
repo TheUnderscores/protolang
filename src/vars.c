@@ -7,11 +7,20 @@
 var_t *newVar(unsigned char type, void *value)
 {
 	var_t *varp = malloc(sizeof(var_t));
+
+	if (varp == NULL)
+		return NULL;
+
 	varp->type = type;
-	/* Make copy of value so it can for sure me free()'d */
-	/* and also so the end-user can not interfere with it */
-	/* through the given pointer argument */
+
+        /*
+	 * Make copy of value so it can for sure be free()'d
+	 * and also so the end-user can not interfere with it
+	 * through the given pointer argument
+	 */
+
 	int size;
+
 	switch (type) {
 	case TYPE_BOOLEAN:
 		size = sizeof(char);
@@ -35,8 +44,14 @@ var_t *newVar(unsigned char type, void *value)
 		size = 0;
 		break;
 	}
+
 	varp->value = malloc(size);
+
+	if (varp->value == NULL)
+		return NULL;
+
 	memcpy(varp->value, value, size);
+
 	return varp;
 }
 

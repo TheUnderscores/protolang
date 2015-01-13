@@ -31,7 +31,19 @@ int main(void)
 	double x1 = 3.1415926535;
 	double x2 = 13.37;
 	var_t *var1 = newVar(TYPE_NUMBER, (void *)&x1);
+
+	if (var1 == NULL) {
+		perror("Could not create variable");
+		return 1;
+	}
+
 	var_t *var2 = newVar(TYPE_NUMBER, (void *)&x2);
+
+	if (var2 == NULL) {
+		perror("Could not create variable");
+		return 1;
+	}
+
 	addToTable(table1, var1);
 	puts("\nTable contents:");
 	showTable(table1);
@@ -39,6 +51,11 @@ int main(void)
 
 	const int input_size = 512; /* 512 should be enough for anyone :P */
 	char *input = malloc(sizeof(char) * input_size);
+
+	if (input == NULL) {
+		perror("Could not allocate memory");
+		return 1;
+	}
 
 	while (1) {
 		puts("\nTable contents:");
@@ -62,6 +79,12 @@ int main(void)
 			continue;
 
 		double *x = malloc(sizeof(double));
+
+		if (x == NULL) {
+			perror("Could not allocate memory");
+			return 1;
+		}
+
 		char *strend;
 		*x = strtod(input, &strend);
 
