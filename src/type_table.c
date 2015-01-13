@@ -127,6 +127,8 @@ void showTable(table_t *tablep)
 		strcat(str, "\t");
 		strcat(str, varStr);
 		puts(str);
+		
+		free(str);
 	}
 }
 
