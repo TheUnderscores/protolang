@@ -3,8 +3,9 @@
 
 void initType_table(void);
 table_t *newTable(void);
-void addToTable(table_t *tablep, var_t *varp);
-void rmvFromTable(table_t *tablep, unsigned int i);
+void addToTable(table_t *tablep, char *varName, var_t *varp);
+var_t *getFromTable(table_t *tablep, char *varName);
+int rmvFromTable(table_t *tablep, char *varName);
 void showTable(table_t *tablep);
 void delTable(table_t *tablep);
 

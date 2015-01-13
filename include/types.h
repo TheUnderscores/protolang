@@ -17,6 +17,7 @@ typedef struct {
 } var_t;
 
 struct tableseg {
+	char* varName;
 	var_t *varp;
 	struct tableseg *next;
 };

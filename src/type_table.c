@@ -5,6 +5,8 @@
 #include "type_table.h"
 #include "vars.h"
 
+static void rmvSeg(table_t *tablep, struct tableseg *prev, struct tableseg *seg);
+static void rmvFromTable_i(table_t *tablep, unsigned int i);
 static char *varValStr(var_t *varp);
 static char *boolToStr(void *value);
 static char *funcToStr(void *value); /* TODO */
@@ -15,6 +17,7 @@ static char *tableToStr(void *value);
 
 static const char *typenames[6];
 static char *(*valStrFuncs[6]) (void *value);
+
 
 /* Global functions */
 
@@ -42,41 +45,54 @@ table_t *newTable(void)
 	return tablep;
 }
 
-void addToTable(table_t *tablep, var_t *varp)
+void addToTable(table_t *tablep, char *varName, var_t *varp)
 {
 	// Add to beginning of stack.
 	struct tableseg *newseg = malloc(sizeof(struct tableseg));
+	int sLen = strlen(varName);
 	memset(newseg, 0, sizeof(struct tableseg));
+	newseg->varName = malloc(sizeof(char)*sLen);
+        memcpy(newseg->varName, varName, sLen);
 	newseg->varp = varp;
 	newseg->next = tablep->first;
 	tablep->first = newseg;
 	tablep->size += 1;
 }
 
-void rmvFromTable(table_t *tablep, unsigned int i)
+var_t *getFromTable(table_t *tablep, char *varName)
 {
-	if (tablep->size == 0)
-		return;
+	struct tableseg *cur;
+	
+	for(cur = tablep->first;
+	    cur != NULL;
+	    cur = cur->next
+	    ) {
+		if (strcmp(varName, cur->varName) == 0)
+			return cur->varp;
+	}
+	
+	/* If function gets to this point, then no match was found for the
+	   given variable name in the given table. */
+	return (var_t *)NULL;
+}
 
-	if (i + 1 > tablep->size)
-		return;
-
+int rmvFromTable(table_t *tablep, char *varName)
+{
 	struct tableseg *prev, *cur;
-
-	/* Get to one before  */
-	int cnt;
-	for (cnt = 0, prev = NULL, cur = tablep->first; cnt < i;
-	     cnt++, prev = cur, cur = cur->next);
-
-	if (prev == NULL)
-		tablep->first = cur->next;
-	else
-		prev->next = cur->next;
-
-	delVar(cur->varp);
-	free(cur);
-
-	tablep->size--;
+	
+	for(prev = NULL, cur = tablep->first;
+	    cur != NULL;
+	    prev = cur, cur = cur->next
+	    ) {
+		if (strcmp(varName, cur->varName) == 0) {
+			rmvSeg(tablep, prev, cur);
+			return 0;
+		}
+	}
+	
+	/* If function gets to this point, then no match was found for the
+	   given variable name in the given table. */
+	return -1;
 }
 
 void showTable(table_t *tablep)
@@ -92,10 +108,24 @@ void showTable(table_t *tablep)
 	var_t *varp;
 	for (cur = tablep->first; cur; cur = cur->next) {
 		varp = cur->varp;
-		char str[60];
-		strcpy(str, typenames[varp->type]);
+		char *varName = cur->varName;
+		char *typeName = (char *)typenames[varp->type];
+		char *varStr = varValStr(varp);
+		/* Explicitly malloc size of string to avoid memory leaks */
+		/* Simply allocating a large portion of memory could be */
+		/* wasteful for small variable names, and still doesn't */
+		/* insure that memory leaks won't occur */
+		/* This function will probably be redone when a */
+		/* string variable type is created */
+		char *str = malloc(sizeof(char) *
+				   (strlen(varName) + strlen(typeName) +
+				    strlen(varStr) + 3)
+				   );
+		strcpy(str, varName);
 		strcat(str, "\t");
-		strcat(str, varValStr(varp));
+		strcat(str, typeName);
+		strcat(str, "\t");
+		strcat(str, varStr);
 		puts(str);
 	}
 }
@@ -108,13 +138,46 @@ void delTable(table_t *tablep)
 		int init_size = tablep->size;
 		for (i = 0; i < init_size; i++)
 			/* Yes, really, delete first element each time */
-			rmvFromTable(tablep, 0);
+			rmvFromTable_i(tablep, 0);
 	}
 	/* Delete table */
 	free(tablep);
 }
 
+
 /* Static functions */
+
+void rmvSeg(table_t *tablep, struct tableseg *prev, struct tableseg *seg)
+{
+	if (prev == NULL)
+		tablep->first = seg->next;
+	else
+		prev->next = seg->next;
+        
+	free(seg->varName);
+	delVar(seg->varp);
+	free(seg);
+	tablep->size--;
+}
+
+void rmvFromTable_i(table_t *tablep, unsigned int i)
+{
+	if (tablep->size == 0)
+		return;
+
+	if (i + 1 > tablep->size)
+		return;
+        
+	struct tableseg *prev, *cur;
+
+	/* Get to one before  */
+	int cnt;
+	for (cnt = 0, prev = NULL, cur = tablep->first;
+	     cnt < i;
+	     cnt++, prev = cur, cur = cur->next);
+	
+        rmvSeg(tablep, prev, cur);
+}
 
 char *varValStr(var_t *varp)
 {
