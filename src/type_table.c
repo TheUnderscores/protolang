@@ -21,7 +21,7 @@ static char *(*valStrFuncs[6]) (void *value);
 
 /* Global functions */
 
-void initType_table(void)
+void init_type_table(void)
 {
 	typenames[TYPE_BOOLEAN] = "boolean";
 	typenames[TYPE_LIST] = "list";

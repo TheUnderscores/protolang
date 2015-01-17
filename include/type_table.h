@@ -1,7 +1,7 @@
 #ifndef TYPE_TABLE_H
 #define TYPE_TABLE_H
 
-void initType_table(void);
+void init_type_table(void);
 table_t *newTable(void);
 void addToTable(table_t *tablep, char *varName, var_t *varp);
 var_t *getFromTable(table_t *tablep, char *varName);
