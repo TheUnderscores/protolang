@@ -18,6 +18,7 @@ static int step2(void);
 static const int loopSteps_len = 3;
 static int (*loopSteps[3])(void);// = {step1, step2, step3};
 static int curStep = 0;
+static const int LOOP_ERROR  = 0;
 static const int LOOP_REPEAT = 1;
 static const int LOOP_NEXT   = 2;
 static const int LOOP_RESET  = 3;
@@ -42,13 +43,22 @@ void init_testing(void)
 	varName = (char *) NULL;
 }
 
-void inputLoop(table_t *inTbl)
+int inputLoop(table_t *inTbl)
 {
 	tablep = inTbl;
 	int cont = 1;
 	input = malloc(sizeof(char) * input_size);
+	
+	if (input == NULL) {
+		perror("Could not allocate memory");
+		return 1;
+	}
+	
 	while (cont) {
 		switch(loopSteps[curStep]()){
+		case 0: /*LOOP_ERROR*/
+			return 1;
+			break;
 		case 1: /*LOOP_REPEAT*/
 			break;
 		case 2: /*LOOP_NEXT*/
@@ -69,6 +79,8 @@ void inputLoop(table_t *inTbl)
 		}
 		/* a case for LOOP_CONT is purposefully omitted */
 	}
+	
+	return 0;
 }
 
 
@@ -177,6 +189,10 @@ int step1(void)
 	
 	int sLen = strlen(input);
 	varName = malloc(sizeof(char) * sLen);
+	if (varName == NULL) {
+		perror("Could not store variable name");
+		return LOOP_ERROR;
+	}
 	memcpy(varName, input, sizeof(char) * sLen);
 	return LOOP_NEXT;
 }
@@ -203,7 +219,17 @@ int step2(void)
 		return LOOP_REPEAT;
 	}
 	
-	addToTable(tablep, varName, newVar(TYPE_NUMBER, (void *)&val));
+	var_t *nVar = newVar(TYPE_NUMBER, (void *)&val);
+	if (nVar == NULL) {
+		perror("Could not create variable");
+		return LOOP_ERROR;
+	}
+			    
+	if (addToTable(tablep, varName, nVar) == 1) {
+		perror("Could not add to table");
+		return LOOP_ERROR;
+	}
+        
 	free(varName);
 	return LOOP_NEXT;
 }

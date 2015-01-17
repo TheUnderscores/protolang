@@ -4,6 +4,6 @@
 #include "types.h"
 
 void init_testing(void);
-void inputLoop(table_t *inTbl);
+int inputLoop(table_t *inTbl);
 
 #endif /* #ifndef TESTING_H */

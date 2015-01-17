@@ -40,23 +40,40 @@ void init_type_table(void)
 table_t *newTable(void)
 {
 	table_t *tablep = malloc(sizeof(table_t));
+
+	if (tablep == NULL)
+		return NULL;
+
 	tablep->size = 0;
 	tablep->first = NULL;
 	return tablep;
 }
 
-void addToTable(table_t *tablep, char *varName, var_t *varp)
+int addToTable(table_t *tablep, char *varName, var_t *varp)
 {
 	// Add to beginning of stack.
 	struct tableseg *newseg = malloc(sizeof(struct tableseg));
-	int sLen = strlen(varName);
+	if (newseg == NULL) {
+		perror("Could not add to table");
+		return 1;
+	}
+        
 	memset(newseg, 0, sizeof(struct tableseg));
+	
+	int sLen = strlen(varName);
 	newseg->varName = malloc(sizeof(char)*sLen);
+	if (newseg->varName == NULL) {
+		perror("Could not store variable name");
+		return 1;
+	}
+	
         memcpy(newseg->varName, varName, sLen);
 	newseg->varp = varp;
 	newseg->next = tablep->first;
 	tablep->first = newseg;
 	tablep->size += 1;
+	
+	return 0;
 }
 
 var_t *getFromTable(table_t *tablep, char *varName)
@@ -183,16 +200,15 @@ void rmvFromTable_i(table_t *tablep, unsigned int i)
 
 char *varValStr(var_t *varp)
 {
-	return valStrFuncs[varp->type] (varp->value);
+	return valStrFuncs[varp->type](varp->value);
 }
 
 char *boolToStr(void *value)
 {
-	if ((char *)value == 0) {
+	if ((char *)value == 0)
 		return (char *)"FALSE";
-	} else {
+	else
 		return (char *)"TRUE";
-	}
 }
 
 char *funcToStr(void *value)

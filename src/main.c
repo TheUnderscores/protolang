@@ -34,8 +34,26 @@ int main(void)
 	double x2 = 13.37;
 	double x3 = 777.666;
 	var_t *var1 = newVar(TYPE_NUMBER, (void *)&x1);
+
+	if (var1 == NULL) {
+		perror("Could not create variable");
+		return 1;
+	}
+
 	var_t *var2 = newVar(TYPE_NUMBER, (void *)&x2);
+	
+	if (var2 == NULL) {
+		perror("Could not create variable");
+		return 1;
+	}
+	
 	var_t *var3 = newVar(TYPE_NUMBER, (void *)&x3);
+	
+	if (var3 == NULL) {
+		perror("Could not create variable");
+		return 1;
+	}
+	
 	char *name1 = (char *)"first";
 	char *name2 = (char *)"bubbles";
 	char *name3 = (char *)"aName";
@@ -54,11 +72,19 @@ int main(void)
 	puts("\nTable contents:");
 	showTable(table1);
 	
+	var_t *var4 = getFromTable(table1, name2);
+	printf("\n%s->value:\t%lf\n", name2, *(double *)var4->value);
+	
+	printf("\nRemoving %s...\n\n", name3);
+	rmvFromTable(table1, name3);
+	showTable(table1);
+	
 	puts("");
 	
 	inputLoop(table1);
-        
+	
 	delTable(table1);
+	
 	return 0;
 }
 
